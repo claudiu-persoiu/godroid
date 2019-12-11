@@ -1,4 +1,4 @@
-var communicationHandler = function (url, errorBlock) {
+var communicationHandler = function (url, errorBlock, callback) {
     var socket, socketOpened = false;
 
     var connect = function () {
@@ -10,7 +10,10 @@ var communicationHandler = function (url, errorBlock) {
         };
 
         socket.onmessage = function (event) {
-            console.log(event.data);
+            var messages = event.data.split("\n");
+            for (var message of messages) {
+                callback(JSON.parse(message));
+            }
         };
 
         socket.onclose = function () {
@@ -19,19 +22,25 @@ var communicationHandler = function (url, errorBlock) {
         };
     };
 
-    connect();
+    var send = function (action, data) {
+        if (!data) {
+            data = "";
+        }
+
+        if (socketOpened) {
+            return socket.send(JSON.stringify({"action": action, "data": data}));
+        }
+        return false;
+    };
 
     return {
-        send: function (message) {
-            if (socketOpened) {
-                return socket.send(JSON.stringify(message));
-            }
-            return false;
+        send: function (action, data) {
+            return send(action, data);
         },
         isConnected: function () {
             return socketOpened;
         },
-        reconnect: function () {
+        connect: function () {
             connect();
         }
     };

@@ -2,12 +2,12 @@
 <html>
 
 <head>
-    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no"/>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no" />
     <meta name="mobile-web-app-capable" content="yes">
 </head>
 
 <body>
-    
+
     <style type="text/css">
         .drag {
             width: 98px;
@@ -44,18 +44,61 @@
     <div id="container-right" class="container">
         <div id="right" class="drag" style="left:0px;top:50px;">drag me</div>
     </div>
+
+    <div>
+        <form id="send-text">
+            <input type="text" id="send-text-text" placeholder="text to display" />
+            <input type="submit" value="send" />
+        </form>
+    </div>
+
+    <div>
+        <button class="display-face">smile</button>
+        <button class="display-face">sad</button>
+        <button class="display-face">neutral</button>
+    </div>
+
     <script type="text/javascript" src="/static/jquery.min.js"></script>
     <script type="text/javascript" src="/static/jquery-ui.min.js"></script>
     <script type="text/javascript" src="/static/communication-handler.js"></script>
     <script>
 
+        $('#send-text').submit(function (e) {
+            var val = $('#send-text-text').val();
+            if (val) {
+                communication.send('text', val);
+            }
+            e.preventDefault();
+        })
+
+        $('.display-face').click(function () {
+            communication.send('face', this.innerHTML);
+        });
+
+        var state = (function () {
+            var internal = {};
+
+            return {
+                getState: function (identifier) {
+                    return internal[identifier];
+                },
+                setState: function (identifier, value) {
+                    if (internal[identifier] !== value) {
+                        internal[identifier] = value;
+                        communication.send(identifier, value);
+                    }
+                }
+            }
+        }());
+
         var revert = function (event, ui) {
-            $(this).data("uiDraggable").originalPosition = {
+            var $this = $(this);
+            $this.data("uiDraggable").originalPosition = {
                 top: 50,
                 left: 0
             };
-            console.log("stop")
-            return !event;
+            state.setState($this.attr('id'), "stop");
+            return true;
         };
 
         var drag = function (event, ui) {
@@ -66,39 +109,40 @@
             var y = thisPos.top - parentPos.top;
 
             if (y < 50) {
-                console.log("up")
+                state.setState(this.id, "up");
             } else {
-                console.log("down")
+                state.setState(this.id, "down");
             }
         }
 
+        $("#left").draggable({
+            containment: "#container-left",
+            revert: revert,
+            drag: drag
+        });
+
+        $("#right").draggable({
+            containment: "#container-right",
+            revert: revert,
+            drag: drag
+        });
+
         var errorBlock = document.getElementById("not-connected");
+
+        errorBlock.onclick = function () {
+            communication.connect();
+        };
+
         var path = `${location.protocol === 'https:' ? 'wss' : 'ws'}:\/\/${location.host + location.pathname}ws`;
 
+        var handler = function (message) {
+            console.log(message);
+        };
+
+        var communication = communicationHandler(path, errorBlock, handler);
+
         $(function () {
-
-            $("#left").draggable({
-                containment: "#container-left",
-                revert: revert,
-                drag: drag
-            });
-
-            $("#right").draggable({
-                containment: "#container-right",
-                revert: revert,
-                drag: drag
-            });
-
-            errorBlock.onclick = function () {
-                communication.reconnect();
-            };
-            
-            var communication = communicationHandler(path, errorBlock);
-
-            setTimeout(function () {
-                communication.send('ceva')
-            }, 500)
-            
+            communication.connect()
         });
 
     </script>
