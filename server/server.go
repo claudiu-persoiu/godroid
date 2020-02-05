@@ -74,28 +74,22 @@ func waitForMessage(c *websocket.Conn) {
 }
 
 func processMessage(msg message) error {
-
 	switch msg.Action {
 	case "left":
-		switch msg.Data {
-		case "up":
-			motorLeft.Forward(1)
-		case "down":
-			motorLeft.Backword(1)
-		case "stop":
-			motorLeft.Stop()
-		}
-
+		dataToAction(msg.Data, motorLeft)
 	case "right":
-		switch msg.Data {
-		case "up":
-			motorRight.Forward(1)
-		case "down":
-			motorRight.Backword(1)
-		case "stop":
-			motorRight.Stop()
-		}
+		dataToAction(msg.Data, motorRight)
 	}
-
 	return nil
+}
+
+func dataToAction(data string, motor gpio.Motor) {
+	switch data {
+	case "up":
+		motor.Forward(1)
+	case "down":
+		motor.Backword(1)
+	case "stop":
+		motor.Stop()
+	}
 }
