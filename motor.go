@@ -17,11 +17,9 @@ func main() {
 		rpio.Close()
 	}()
 
-	motor := gpio.NewMotor(rpio.Pin(23), rpio.Pin(24), rpio.Pin(18))
+	motor := gpio.NewMotor(23, 24, 18)
+	motor2 := gpio.NewMotor(19, 26, 13)
 
-	motor2 := gpio.NewMotor(rpio.Pin(19), rpio.Pin(26), rpio.Pin(13))
-
-	
 	// out := rpio.Pin(23)
 	// out.Output()
 	// out.High()

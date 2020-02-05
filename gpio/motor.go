@@ -8,11 +8,14 @@ type Motor struct {
 	pwm rpio.Pin
 }
 
-func NewMotor(fwd, bw, pwm rpio.Pin) *Motor {
+func NewMotor(fwdPin, bwPin, pwmPin int) *Motor {
+	fwd := rpio.Pin(fwdPin)
 	fwd.Output()
 
+	bw := rpio.Pin(bwPin)
 	bw.Output()
 
+	pwm := rpio.Pin(pwmPin)
 	pwm.Mode(rpio.Pwm)
 	pwm.Freq(200)
 	pwm.DutyCycle(0, 32)

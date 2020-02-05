@@ -6,13 +6,13 @@ import (
 
 	"github.com/claudiu-persoiu/godroid/gpio"
 	"github.com/claudiu-persoiu/godroid/server"
-	"github.com/stianeikeland/go-rpio/v4"
 )
 
 func main() {
 	address := ":3333"
 
-	gpio.NewMotor(rpio.Pin(23), rpio.Pin(16), rpio.Pin(18))
+	motorLeft := gpio.NewMotor(24, 23, 18)
+	motorRight := gpio.NewMotor(26, 19, 13)
 
 	fmt.Println("Starting server: " + address)
 	err := server.StartServer(address)
