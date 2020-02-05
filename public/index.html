@@ -29,7 +29,15 @@
             height: 200px;
             border: 1px solid black;
             float: left;
-            margin-right: 30px;
+        }
+
+        #container-right {
+            float: right;
+        }
+
+        #text-container {
+            clear: both;
+            text-align: center;
         }
     </style>
 
@@ -45,14 +53,11 @@
         <div id="right" class="drag" style="left:0px;top:50px;">drag me</div>
     </div>
 
-    <div>
+    <div id="text-container">
         <form id="send-text">
             <input type="text" id="send-text-text" placeholder="text to display" />
             <input type="submit" value="send" />
         </form>
-    </div>
-
-    <div>
         <button class="display-face">smile</button>
         <button class="display-face">sad</button>
         <button class="display-face">neutral</button>
@@ -60,6 +65,7 @@
 
     <script type="text/javascript" src="/static/jquery.min.js"></script>
     <script type="text/javascript" src="/static/jquery-ui.min.js"></script>
+    <script type="text/javascript" src="/static/jquery.ui.touch-punch.min.js"></script>
     <script type="text/javascript" src="/static/communication-handler.js"></script>
     <script>
 
