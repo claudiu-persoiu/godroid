@@ -26,7 +26,7 @@
         .container {
             background-color: lightblue;
             width: 100px;
-            height: 200px;
+            height: 202px;
             border: 1px solid black;
             float: left;
         }
@@ -64,8 +64,7 @@
     </div>
 
     <script type="text/javascript" src="/static/jquery.min.js"></script>
-    <script type="text/javascript" src="/static/jquery-ui.min.js"></script>
-    <script type="text/javascript" src="/static/jquery.ui.touch-punch.min.js"></script>
+    <script type="text/javascript" src="/static/draggabilly.pkgd.min.js"></script>
     <script type="text/javascript" src="/static/communication-handler.js"></script>
     <script>
 
@@ -97,41 +96,57 @@
             }
         }());
 
-        var revert = function (event, ui) {
-            var $this = $(this);
-            $this.data("uiDraggable").originalPosition = {
-                top: 50,
-                left: 0
-            };
-            state.setState($this.attr('id'), "stop");
-            return true;
-        };
+        // var revert = function (event, ui) {
+        //     var $this = $(this);
+        //     $this.data("uiDraggable").originalPosition = {
+        //         top: 50,
+        //         left: 0
+        //     };
+        //     state.setState($this.attr('id'), "stop");
+        //     return true;
+        // };
 
-        var drag = function (event, ui) {
-            var $this = $(this);
-            var thisPos = $this.position();
-            var parentPos = $this.parent().position();
+        // var drag = function (event, ui) {
+        //     var $this = $(this);
+        //     var thisPos = $this.position();
+        //     var parentPos = $this.parent().position();
 
-            var y = thisPos.top - parentPos.top;
+        //     var y = thisPos.top - parentPos.top;
 
-            if (y < 50) {
-                state.setState(this.id, "up");
-            } else {
-                state.setState(this.id, "down");
-            }
+        //     if (y < 50) {
+        //         state.setState(this.id, "up");
+        //     } else {
+        //         state.setState(this.id, "down");
+        //     }
+        // }
+
+        function attachDraggingEvents(identifier, containerIdentifier) {
+            const $this = $(identifier);
+            const draggabilly = $this.draggabilly({
+                containment: containerIdentifier,
+            });
+            const id = $this.attr("id");
+            const draggie = $this.data('draggabilly');
+
+            draggabilly.on("dragMove", function() {
+                // var draggie = $this.data('draggabilly');
+                if (draggie.position.y < 50) {
+                    state.setState(id, "up");
+                } else {
+                    state.setState(id, "down");
+                }
+
+                console.log( 'eventName happened', draggie.position.x, draggie.position.y );
+            }).on("dragEnd", function() {
+                // var draggie = $this.data('draggabilly');
+                draggie.setPosition(0, 50);
+                state.setState(id, "stop");
+            })
         }
 
-        $("#left").draggable({
-            containment: "#container-left",
-            revert: revert,
-            drag: drag
-        });
+        attachDraggingEvents("#left", "#container-left");
+        attachDraggingEvents("#right", "#container-right");
 
-        $("#right").draggable({
-            containment: "#container-right",
-            revert: revert,
-            drag: drag
-        });
 
         var errorBlock = document.getElementById("not-connected");
 
