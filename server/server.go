@@ -18,7 +18,7 @@ type message struct {
 }
 
 // StartServer start https communcation
-func StartServer() error {
+func StartServer(address string) error {
 	router := http.NewServeMux()
 	router.Handle("/static/", http.StripPrefix("/static/", http.FileServer(http.Dir("static"))))
 	router.Handle("/ws", http.HandlerFunc(webSocket))
@@ -32,7 +32,7 @@ func StartServer() error {
 		}
 	})
 
-	return http.ListenAndServe(":3333", router)
+	return http.ListenAndServe(address, router)
 }
 
 func webSocket(w http.ResponseWriter, r *http.Request) {
