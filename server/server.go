@@ -2,15 +2,18 @@ package server
 
 import (
 	"encoding/json"
-	"fmt"
 	"html/template"
 	"log"
 	"net/http"
 
+	"github.com/claudiu-persoiu/godroid/gpio"
 	"github.com/gorilla/websocket"
 )
 
 var upgrader = websocket.Upgrader{}
+
+var motorLeft gpio.Motor
+var motorRight gpio.Motor
 
 type message struct {
 	Action string `json:"action"`
@@ -18,7 +21,9 @@ type message struct {
 }
 
 // StartServer start https communcation
-func StartServer(address string) error {
+func StartServer(address string, mLeft gpio.Motor, mRight gpio.Motor) error {
+	motorLeft = mLeft
+	motorRight = mRight
 	router := http.NewServeMux()
 	router.Handle("/static/", http.StripPrefix("/static/", http.FileServer(http.Dir("static"))))
 	router.Handle("/ws", http.HandlerFunc(webSocket))
@@ -72,8 +77,24 @@ func processMessage(msg message) error {
 
 	switch msg.Action {
 	case "left":
+		switch msg.Data {
+		case "up":
+			motorLeft.Forward(1)
+		case "down":
+			motorLeft.Backword(1)
+		case "stop":
+			motorLeft.Stop()
+		}
+
 	case "right":
-		fmt.Println(msg)
+		switch msg.Data {
+		case "up":
+			motorRight.Forward(1)
+		case "down":
+			motorRight.Backword(1)
+		case "stop":
+			motorRight.Stop()
+		}
 	}
 
 	return nil
