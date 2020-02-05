@@ -17,8 +17,11 @@ func main() {
 		rpio.Close()
 	}()
 
-	motor := gpio.NewMotor(rpio.Pin(23), rpio.Pin(16), rpio.Pin(18))
+	motor := gpio.NewMotor(rpio.Pin(23), rpio.Pin(24), rpio.Pin(18))
 
+	motor2 := gpio.NewMotor(rpio.Pin(19), rpio.Pin(26), rpio.Pin(13))
+
+	
 	// out := rpio.Pin(23)
 	// out.Output()
 	// out.High()
@@ -47,8 +50,14 @@ func main() {
 	// out.Low()
 
 	motor.Forward(1)
-	time.Sleep(time.Second)
+	time.Sleep(time.Second * 2)
 	motor.Backword(1)
-	time.Sleep(time.Second)
+	time.Sleep(time.Second * 2)
 	motor.Stop()
+
+	motor2.Forward(1)
+	time.Sleep(time.Second * 2)
+	motor2.Backword(1)
+	time.Sleep(time.Second * 2)
+	motor2.Stop()
 }
