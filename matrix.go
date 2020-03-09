@@ -10,8 +10,8 @@ import (
 
 var (
 	data  = rpio.Pin(17)
-	clock = rpio.Pin(27)
-	latch = rpio.Pin(22)
+	clock = rpio.Pin(22)
+	latch = rpio.Pin(27)
 )
 
 func main() {
