@@ -36,6 +36,6 @@ func main() {
 			break
 		}
 
-		matrix.Show(text)
+		matrix.ShowText(text)
 	}
 }
