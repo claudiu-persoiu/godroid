@@ -28,14 +28,14 @@ func main() {
 
 	for {
 		reader := bufio.NewReader(os.Stdin)
-		fmt.Print("Enter your city: ")
-		city, _ := reader.ReadString('\n')
-		city = strings.TrimSpace(city)
-		if city == "" {
+		fmt.Print("Enter your text: ")
+		text, _ := reader.ReadString('\n')
+		text = strings.TrimSpace(text)
+		if text == "" {
 			fmt.Println("Bu Bye now")
 			break
 		}
 
-		matrix.Show(city)
+		matrix.Show(text)
 	}
 }
