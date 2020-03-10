@@ -1,4 +1,4 @@
-package gpio
+package motor
 
 import "github.com/stianeikeland/go-rpio/v4"
 

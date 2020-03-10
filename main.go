@@ -5,7 +5,7 @@ import (
 	"fmt"
 	"log"
 
-	"github.com/claudiu-persoiu/godroid/gpio"
+	"github.com/claudiu-persoiu/godroid/motor"
 	"github.com/claudiu-persoiu/godroid/server"
 	"github.com/stianeikeland/go-rpio/v4"
 )
@@ -15,8 +15,8 @@ func main() {
 	noGpio := flag.Bool("noGpio", false, "disable gpio init")
 	flag.Parse()
 
-	var motorLeft gpio.Motor
-	var motorRight gpio.Motor
+	var motorLeft motor.Motor
+	var motorRight motor.Motor
 
 	if !*noGpio {
 		err := rpio.Open()
@@ -26,11 +26,11 @@ func main() {
 		defer func() {
 			rpio.Close()
 		}()
-		motorLeft = gpio.NewRealMotor(rpio.Pin(24), rpio.Pin(23), rpio.Pin(18))
-		motorRight = gpio.NewRealMotor(rpio.Pin(26), rpio.Pin(19), rpio.Pin(13))
+		motorLeft = motor.NewRealMotor(rpio.Pin(24), rpio.Pin(23), rpio.Pin(18))
+		motorRight = motor.NewRealMotor(rpio.Pin(26), rpio.Pin(19), rpio.Pin(13))
 	} else {
-		motorLeft = gpio.NewFakeMotor("left")
-		motorRight = gpio.NewFakeMotor("right")
+		motorLeft = motor.NewFakeMotor("left")
+		motorRight = motor.NewFakeMotor("right")
 	}
 
 	fmt.Println("Starting server: " + *address)

@@ -19,6 +19,7 @@ func main() {
 		log.Fatal(err)
 	}
 
+	// reseting the pins
 	data.Output()
 	data.Low()
 	clock.Output()
@@ -26,11 +27,12 @@ func main() {
 	latch.Output()
 	latch.Low()
 
+	// set decode mode
 	sendData(0x09) // address
 	sendData(0x00) // no decode
 	pulseLatch()
 
-	// set intensity
+	// set led intensity
 	sendData(0x0A) // address
 	sendData(0x02) // 9/32
 	pulseLatch()
@@ -65,7 +67,7 @@ func main() {
 
 	time.Sleep(5 * time.Second)
 
-	// set for normal operation
+	// turn off
 	sendData(0x0C) // address
 	sendData(0x00) // On
 	pulseLatch()

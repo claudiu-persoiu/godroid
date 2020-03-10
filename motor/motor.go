@@ -1,4 +1,4 @@
-package gpio
+package motor
 
 type Motor interface {
 	Forward(int)

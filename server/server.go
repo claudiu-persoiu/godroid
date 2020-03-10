@@ -6,14 +6,14 @@ import (
 	"log"
 	"net/http"
 
-	"github.com/claudiu-persoiu/godroid/gpio"
+	"github.com/claudiu-persoiu/godroid/motor"
 	"github.com/gorilla/websocket"
 )
 
 var upgrader = websocket.Upgrader{}
 
-var motorLeft gpio.Motor
-var motorRight gpio.Motor
+var motorLeft motor.Motor
+var motorRight motor.Motor
 
 type message struct {
 	Action string `json:"action"`
@@ -21,7 +21,7 @@ type message struct {
 }
 
 // StartServer start https communcation
-func StartServer(address string, mLeft gpio.Motor, mRight gpio.Motor) error {
+func StartServer(address string, mLeft motor.Motor, mRight motor.Motor) error {
 	motorLeft = mLeft
 	motorRight = mRight
 	router := http.NewServeMux()
@@ -83,7 +83,7 @@ func processMessage(msg message) error {
 	return nil
 }
 
-func dataToAction(data string, motor gpio.Motor) {
+func dataToAction(data string, motor motor.Motor) {
 	switch data {
 	case "up":
 		motor.Forward(1)
