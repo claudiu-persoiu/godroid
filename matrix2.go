@@ -12,19 +12,16 @@ import (
 )
 
 func main() {
-	// fmt.Printf("%08b", 0)
-	// println()
-	// a := fmt.Sprintf("%08b", 10)
-
-	// for i, r := range []rune(a) {
-	// 	fmt.Printf("i%d r %c\n", i, r)
-	// }
-
 	if err := rpio.Open(); err != nil {
 		log.Fatal(err)
 	}
 
 	matrix := max7219.NewDisplay(rpio.Pin(17), rpio.Pin(22), rpio.Pin(27), 1)
+
+	matrix.ShowSymbol("tree")
+	matrix.ShowSymbol("smile")
+	matrix.ShowSymbol("sad")
+	matrix.ShowSymbol("heart")
 
 	for {
 		reader := bufio.NewReader(os.Stdin)

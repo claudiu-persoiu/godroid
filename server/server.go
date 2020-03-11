@@ -6,24 +6,21 @@ import (
 	"log"
 	"net/http"
 
-	"github.com/claudiu-persoiu/godroid/motor"
 	"github.com/gorilla/websocket"
 )
 
 var upgrader = websocket.Upgrader{}
 
-var motorLeft motor.Motor
-var motorRight motor.Motor
+var callbackWebSocket func(Message)
 
-type message struct {
+type Message struct {
 	Action string `json:"action"`
 	Data   string `json:"data,omitempty"`
 }
 
 // StartServer start https communcation
-func StartServer(address string, mLeft motor.Motor, mRight motor.Motor) error {
-	motorLeft = mLeft
-	motorRight = mRight
+func StartServer(address string, callback func(Message)) error {
+	callbackWebSocket = callback
 	router := http.NewServeMux()
 	router.Handle("/static/", http.StripPrefix("/static/", http.FileServer(http.Dir("static"))))
 	router.Handle("/ws", http.HandlerFunc(webSocket))
@@ -63,33 +60,12 @@ func waitForMessage(c *websocket.Conn) {
 
 		log.Printf("recv: %s", msg)
 
-		var obj message
+		var obj Message
 		if err := json.Unmarshal(msg, &obj); err == nil {
-			processMessage(obj)
+			callbackWebSocket(obj)
 		} else {
 			log.Println("Error parcing message:")
 			log.Println(err)
 		}
-	}
-}
-
-func processMessage(msg message) error {
-	switch msg.Action {
-	case "left":
-		dataToAction(msg.Data, motorLeft)
-	case "right":
-		dataToAction(msg.Data, motorRight)
-	}
-	return nil
-}
-
-func dataToAction(data string, motor motor.Motor) {
-	switch data {
-	case "up":
-		motor.Forward(1)
-	case "down":
-		motor.Backword(1)
-	case "stop":
-		motor.Stop()
 	}
 }

@@ -5,18 +5,20 @@ import (
 	"fmt"
 	"log"
 
+	"github.com/claudiu-persoiu/godroid/max7219"
 	"github.com/claudiu-persoiu/godroid/motor"
 	"github.com/claudiu-persoiu/godroid/server"
 	"github.com/stianeikeland/go-rpio/v4"
 )
 
+var motorLeft *motor.Motor
+var motorRight *motor.Motor
+var matrix *max7219.Display
+
 func main() {
 	address := flag.String("address", ":3333", "server address")
 	noGpio := flag.Bool("noGpio", false, "disable gpio init")
 	flag.Parse()
-
-	var motorLeft motor.Motor
-	var motorRight motor.Motor
 
 	if !*noGpio {
 		err := rpio.Open()
@@ -26,15 +28,41 @@ func main() {
 		defer func() {
 			rpio.Close()
 		}()
-		motorLeft = motor.NewRealMotor(rpio.Pin(24), rpio.Pin(23), rpio.Pin(18))
-		motorRight = motor.NewRealMotor(rpio.Pin(26), rpio.Pin(19), rpio.Pin(13))
-	} else {
-		motorLeft = motor.NewFakeMotor("left")
-		motorRight = motor.NewFakeMotor("right")
+		motorLeft = motor.NewMotor(rpio.Pin(24), rpio.Pin(23), rpio.Pin(18))
+		motorRight = motor.NewMotor(rpio.Pin(26), rpio.Pin(19), rpio.Pin(13))
+		matrix = max7219.NewDisplay(rpio.Pin(17), rpio.Pin(22), rpio.Pin(27), 1)
 	}
 
 	fmt.Println("Starting server: " + *address)
-	if err := server.StartServer(*address, motorLeft, motorRight); err != nil {
+	if err := server.StartServer(*address, callback); err != nil {
 		log.Fatal("ListenAndServe: ", err)
+	}
+}
+
+func callback(msg server.Message) {
+	switch msg.Action {
+	case "left":
+		dataToAction(msg.Data, motorLeft)
+	case "right":
+		dataToAction(msg.Data, motorRight)
+	case "text":
+		matrix.ShowText(msg.Data)
+	case "symbol":
+		matrix.ShowSymbol(msg.Data)
+	}
+}
+
+func dataToAction(data string, motor *motor.Motor) {
+	if motor == nil {
+		return
+	}
+
+	switch data {
+	case "up":
+		motor.Forward(1)
+	case "down":
+		motor.Backword(1)
+	case "stop":
+		motor.Stop()
 	}
 }
