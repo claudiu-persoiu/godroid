@@ -108,11 +108,11 @@
             draggabilly.on("dragMove", function() {
                 let speed = 1 + Math.round(draggie.position.y / 20);
                 if (draggie.position.y < 50) {
-                    state.setState(id, JSON.stringify(["up", speed]));
+                    state.setState(id, JSON.stringify(["up", speed.toString()]));
                 } else {
-                    state.setState(id, "down");
+                    // state.setState(id, "down");
                     speed = 7 - speed;
-                    state.setState(id, JSON.stringify(["down", speed]));
+                    state.setState(id, JSON.stringify(["down", speed.toString()]));
                 }
 
                 console.log( 'eventName happened', draggie.position.x, speed);

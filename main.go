@@ -61,14 +61,17 @@ func dataToAction(data string, motor *motor.Motor) {
 
 	if data == "stop" {
 		motor.Stop()
+		return
 	}
 
 	var arr []string
 
 	if err := json.Unmarshal([]byte(data), &arr); err != nil {
 		log.Println("Error parcing message:")
-		log.Println(err)
+		log.Fatal(err)
 	}
+
+	print(arr)
 
 	speed, _ := strconv.Atoi(arr[1])
 
