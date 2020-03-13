@@ -24,13 +24,13 @@ func (m *Motor) Forward(speed int) {
 	m.bw.Low()
 	m.fwd.High()
 
-	m.pwm.DutyCycle(uint32(32 - (speed * 2)), 32)
+	m.pwm.DutyCycle(uint32(34 - (speed * 2)), 32)
 }
 
 func (m *Motor) Backword(speed int) {
 	m.fwd.Low()
 	m.bw.High()
-	m.pwm.DutyCycle(uint32(32 - (speed * 2)), 32)
+	m.pwm.DutyCycle(uint32(34 - (speed * 2)), 32)
 }
 
 func (m *Motor) Stop() {
