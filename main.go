@@ -1,9 +1,11 @@
 package main
 
 import (
+	"encoding/json"
 	"flag"
 	"fmt"
 	"log"
+	"strconv"
 
 	"github.com/claudiu-persoiu/godroid/max7219"
 	"github.com/claudiu-persoiu/godroid/motor"
@@ -57,12 +59,23 @@ func dataToAction(data string, motor *motor.Motor) {
 		return
 	}
 
-	switch data {
-	case "up":
-		motor.Forward(1)
-	case "down":
-		motor.Backword(1)
-	case "stop":
+	if data == "stop" {
 		motor.Stop()
+	}
+
+	var arr []string
+
+	if err := json.Unmarshal([]byte(data), &arr); err != nil {
+		log.Println("Error parcing message:")
+		log.Println(err)
+	}
+
+	speed, _ := strconv.Atoi(arr[1])
+
+	switch arr[0] {
+	case "up":
+		motor.Forward(speed)
+	case "down":
+		motor.Backword(speed)
 	}
 }

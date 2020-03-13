@@ -106,13 +106,16 @@
             const draggie = $this.data('draggabilly');
 
             draggabilly.on("dragMove", function() {
+                let speed = 1 + Math.round(draggie.position.y / 20);
                 if (draggie.position.y < 50) {
-                    state.setState(id, "up");
+                    state.setState(id, JSON.stringify(["up", speed]));
                 } else {
                     state.setState(id, "down");
+                    speed = 7 - speed;
+                    state.setState(id, JSON.stringify(["down", speed]));
                 }
 
-                console.log( 'eventName happened', draggie.position.x, draggie.position.y );
+                console.log( 'eventName happened', draggie.position.x, speed);
             }).on("dragEnd", function() {
                 draggie.setPosition(0, 50);
                 state.setState(id, "stop");
