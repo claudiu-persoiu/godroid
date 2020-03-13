@@ -71,8 +71,6 @@ func dataToAction(data string, motor *motor.Motor) {
 		log.Fatal(err)
 	}
 
-	print(arr)
-
 	speed, _ := strconv.Atoi(arr[1])
 
 	switch arr[0] {
